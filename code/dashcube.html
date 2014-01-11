@@ -12,54 +12,49 @@
         WIDTH = window.innerWidth;
         HEIGHT = window.innerHeight;
 
-        init();
+        var container = document.createElement( 'div' );
+        document.body.appendChild( container );
 
-        function init() {
-            var container = document.createElement( 'div' );
-            document.body.appendChild( container );
+        init(container, 0x222222);
+
+        
+        objects.push( coordsys(scene, 30, new THREE.Vector3(-20, -5, 0), 0xffaa00) );
+        objects.push( coordsys(scene, 15, new THREE.Vector3(-50, 20, 0), 0xff00aa) );
+
+
+        // want a function that draws a coord system of a certain size at a certain
+        // point in a certain container
+
+        function coordsys(scene, size, position, color) {
+            var geometryCube = triad( size , 0, 0, 0);
+            geometryCube.computeLineDistances();
+
+            var cube_mat = new THREE.LineDashedMaterial( 
+                    { color: color, dashSize: 3, gapSize: 1, linewidth: 4 });
+
+            var object = new THREE.Line( geometryCube, cube_mat, THREE.LinePieces );
+
+            object.position = position;
+            scene.add( object );
+
+            return object;
+        }
+
+        function init(container, rendererBGColor) {
 
             var aspect = WIDTH / HEIGHT;
-            camera = new THREE.PerspectiveCamera( 75, aspect, 0.1, 1000 ); 
+            camera = new THREE.PerspectiveCamera( 33, aspect, 0.1, 1000 ); 
             camera.position.z = 100;
 
             scene = new THREE.Scene(); 
 
             renderer = new THREE.WebGLRenderer( { antialias: true } );
-            renderer.setClearColor(0x222222); // a nice gray
+            renderer.setClearColor( rendererBGColor ); // a nice gray
             renderer.setSize( WIDTH, HEIGHT );
             container.appendChild( renderer.domElement );
-
-            /***/
-            var geometryCube = cube( 30 , 0, 0, 0);
-            geometryCube.computeLineDistances();
-
-            var cube_mat = new THREE.LineDashedMaterial( { color: 0xffaa00, dashSize: 3, gapSize: 1, linewidth: 4 } );
-
-            var object = new THREE.Line( geometryCube, cube_mat, 
-                    THREE.LinePieces );
-
-            object.position.set(-20, -5, 0);
-            objects.push( object );
-            scene.add( object );
-
-            //////////////////////////////////
-
-
-            var geometryCube2 = cube( 15 , 0, 0, 0);
-            geometryCube2.computeLineDistances();
-
-            var cube_mat2 = new THREE.LineDashedMaterial( { color: 0xff00aa, dashSize: 2, gapSize: 1, linewidth: 4 } );
-
-            var object2 = new THREE.Line( geometryCube2, cube_mat2, 
-                    THREE.LinePieces );
-
-            object2.position.set(10, 20, 0);
-            objects.push( object2 );
-            scene.add( object2 );
-
         }
 
-        function cube( size, x, y, z) {
+        function triad( size, x, y, z) {
             var h = size * 0.5;
 
             var geometry = new THREE.Geometry();
@@ -84,23 +79,6 @@
         camera.position.z = 5;
         */
 
-/*
-        var triad = new THREE.Geometry(); 
-        triad.vertices.push( new THREE.Vector3(  0,  0,  0 ) );
-        triad.vertices.push( new THREE.Vector3( 10,  0,  0 ) ); 
-        triad.vertices.push( new THREE.Vector3(  0,  0,  0 ) );
-        triad.vertices.push( new THREE.Vector3(  0, 10,  0 ) ); 
-        triad.vertices.push( new THREE.Vector3(  0,  0,  0 ) );
-        triad.vertices.push( new THREE.Vector3(  0,  0, 10 ) ); 
-
-        var line_mat = new THREE.LineBasicMaterial({'linewidth': 3});
-
-        var frame = new THREE.Line(triad, line_mat,
-                                   THREE.LinePieces);
-
-
-        scene.add( frame );
-        */
 
         function render() { 
             requestAnimationFrame(render); 
@@ -112,6 +90,7 @@
                 //objects[0].rotation.y += 0.01;
                 //objects[1].rotation.x -= 0.05;
                 objects[1].rotation.y += 0.05;
+                objects[1].position.x += 0.05;
             renderer.render(scene, camera);
         } 
         render();
