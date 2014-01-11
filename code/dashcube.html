@@ -1,0 +1,122 @@
+<html> 
+    <head>
+        <title>My first Three.js app</title>
+        <style>canvas { width: 100%; height: 100% }</style>
+    </head>
+    <body>
+    <script src="https://rawgithub.com/mrdoob/three.js/master/build/three.js"></script> 
+    
+    <script>
+        var camera, scene, renderer, material;
+        var objects = [];
+        WIDTH = window.innerWidth;
+        HEIGHT = window.innerHeight;
+
+        init();
+
+        function init() {
+            var container = document.createElement( 'div' );
+            document.body.appendChild( container );
+
+            var aspect = WIDTH / HEIGHT;
+            camera = new THREE.PerspectiveCamera( 75, aspect, 0.1, 1000 ); 
+            camera.position.z = 100;
+
+            scene = new THREE.Scene(); 
+
+            renderer = new THREE.WebGLRenderer( { antialias: true } );
+            renderer.setClearColor(0x222222); // a nice gray
+            renderer.setSize( WIDTH, HEIGHT );
+            container.appendChild( renderer.domElement );
+
+            /***/
+            var geometryCube = cube( 30 , 0, 0, 0);
+            geometryCube.computeLineDistances();
+
+            var cube_mat = new THREE.LineDashedMaterial( { color: 0xffaa00, dashSize: 3, gapSize: 1, linewidth: 4 } );
+
+            var object = new THREE.Line( geometryCube, cube_mat, 
+                    THREE.LinePieces );
+
+            object.position.set(-20, -5, 0);
+            objects.push( object );
+            scene.add( object );
+
+            //////////////////////////////////
+
+
+            var geometryCube2 = cube( 15 , 0, 0, 0);
+            geometryCube2.computeLineDistances();
+
+            var cube_mat2 = new THREE.LineDashedMaterial( { color: 0xff00aa, dashSize: 2, gapSize: 1, linewidth: 4 } );
+
+            var object2 = new THREE.Line( geometryCube2, cube_mat2, 
+                    THREE.LinePieces );
+
+            object2.position.set(10, 20, 0);
+            objects.push( object2 );
+            scene.add( object2 );
+
+        }
+
+        function cube( size, x, y, z) {
+            var h = size * 0.5;
+
+            var geometry = new THREE.Geometry();
+
+            geometry.vertices.push( new THREE.Vector3( x, y, z ) );
+            geometry.vertices.push( new THREE.Vector3( x + size, y, z ) );
+
+            geometry.vertices.push( new THREE.Vector3( x, y, z ) );
+            geometry.vertices.push( new THREE.Vector3( x, y + size, z ) );
+
+            geometry.vertices.push( new THREE.Vector3( x, y, z ) );
+            geometry.vertices.push( new THREE.Vector3( x, y, z + size ) );
+
+            return geometry;
+        }
+
+        /*
+        var geometry = new THREE.CubeGeometry(1,1,1);
+        var material = new THREE.MeshBasicMaterial( { color: 0x00ff00 } ); 
+        var cube = new THREE.Mesh( geometry, material ); 
+        scene.add( cube ); 
+        camera.position.z = 5;
+        */
+
+/*
+        var triad = new THREE.Geometry(); 
+        triad.vertices.push( new THREE.Vector3(  0,  0,  0 ) );
+        triad.vertices.push( new THREE.Vector3( 10,  0,  0 ) ); 
+        triad.vertices.push( new THREE.Vector3(  0,  0,  0 ) );
+        triad.vertices.push( new THREE.Vector3(  0, 10,  0 ) ); 
+        triad.vertices.push( new THREE.Vector3(  0,  0,  0 ) );
+        triad.vertices.push( new THREE.Vector3(  0,  0, 10 ) ); 
+
+        var line_mat = new THREE.LineBasicMaterial({'linewidth': 3});
+
+        var frame = new THREE.Line(triad, line_mat,
+                                   THREE.LinePieces);
+
+
+        scene.add( frame );
+        */
+
+        function render() { 
+            requestAnimationFrame(render); 
+
+            var time = Date.now() * 0.001;
+
+                objects[0].rotation.x += 0.03;
+                objects[0].rotation.z += 0.05;
+                //objects[0].rotation.y += 0.01;
+                //objects[1].rotation.x -= 0.05;
+                objects[1].rotation.y += 0.05;
+            renderer.render(scene, camera);
+        } 
+        render();
+    </script>
+    </body>
+</html>
+
+
