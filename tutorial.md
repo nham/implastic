@@ -73,10 +73,38 @@ A **reference frame** is still the combination of an origin and a coordinate sys
 
 The definition for transition matrix needs to change too, since  we now need a transition matrix at each time $t$. So $H(t)_{ij} = d_i(t) \cdot c_j(t)$.
 
-
 A **particle** can be modeled as a function $\mathbb{R} \to A$. So a particle can (and generally does) move in the affine space.
 
+If $\mathcal{C} = (O, C)$ is a reference frame, then a **trajectory of a particle with respect to $\mathcal{C}$** is a function $x: \mathbb{R} \to \mathbb{R}^2$. Then for every $t$, $x(t) = (x_1(t), x_2(t))$ for some scalar functions $x_1$ and $x_2$. For every $t$, $O \to (x_1(t) c_1(t) + x_2(t) c_2(t))$ is a point in $A$. In words, $x(t)$ is the coordinates of the particle with respect to $\mathcal{C}$.
+
+
+TODO: An illustration of why rotating a reference frame by $\theta$ leads to the coordinate vector being rotated by $- \theta$. I'm thinking something slightly above the x-axis and a rotation in the positive direction that exceeds angle of the original coordinate vector.
 
 # A special case
 
-Let $(O, C)$ be a reference frame
+Let $\mathcal{C} = (o, C)$ and $\mathcal{D} = (o, D)$ be reference frames sharing the same origin with reference frames situated like this:
+
+TODO: a pretty picture
+
+At $t = 0$, $D$ is rotated $\theta$ away from $C$. Both reference frames are rotating at a constant speed, with angular velocities of $\omega_1$ and $\omega_2$, respectively, for $\mathcal{C}$ and $\mathcal{D}$.
+
+
+
+## An introductory example.
+
+$\mathcal{C} = (O, C)$ and $\mathcal{D} = (O, D)$ are reference frames. Suppose that
+
+$$x(t) = r \begin{bmatrix} cos(\omega_1 t) \\
+-sin(\omega_1 t) \end{bmatrix}$$
+
+and
+
+$$y(t) = r \begin{bmatrix} cos(\theta + \omega_2 t) \\
+-sin(\theta + \omega_2 t) \end{bmatrix}$$
+
+are the trajectories in $\mathcal{C}$ and $\mathcal{D}$, respectively, of some particle. We seek to understand the relationship between $x'(t)$ and $y'(t)$.
+
+We'll determine the transition matrix $H$ first. Initially (at time $t = 0$), $\mathcal{D}$ is rotated $\theta$ with respect to $\mathcal{C}$. In general, $\mathcal{D}$ is rotated $\theta + (\omega_2 - \omega_1) t$. Hence
+
+$$H(t) = \begin{bmatrix} cos(\theta + \omega t) & sin(\theta + \omega t) \\
+-sin(\theta + \omega t) & cos(\theta + \omega t) \end{bmatrix}$$
