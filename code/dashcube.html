@@ -9,28 +9,60 @@
     <script>
         var camera, scene, renderer, material;
         var objects = [];
-        WIDTH = window.innerWidth;
-        HEIGHT = window.innerHeight;
+        var WIDTH = window.innerWidth;
+        var HEIGHT = window.innerHeight;
 
         var container = document.createElement( 'div' );
         document.body.appendChild( container );
 
-        init(container, 0x222222);
+        init(container, 0xefefef);
 
         
-        objects.push( coordsys(scene, 30, new THREE.Vector3(-20, -5, 0), 0xffaa00) );
-        objects.push( coordsys(scene, 15, new THREE.Vector3(-50, 20, 0), 0xff00aa) );
+        /*
+        objects.push( coordsys3(scene, 30, new THREE.Vector3(-20, -5, 0), 0xffaa00) );
+        objects.push( coordsys3(scene, 15, new THREE.Vector3(-50, 20, 0), 0xff00aa) );
+        */
+
+        var axis_size = 320;
+        var origin = new THREE.Vector2(0, 0);
+        objects.push( coordsys2(scene, 
+                                axis_size, 
+                                origin, 0xffaa00,
+                                0.0) );
+
+        objects.push( coordsys2(scene, 
+                                axis_size, 
+                                origin, 0xff00aa,
+                                Math.PI/60) );
 
 
-        // want a function that draws a coord system of a certain size at a certain
-        // point in a certain container
+        function coordsys2(scene, size, position, color, init_ang) {
+            console.log(size);
+            console.log(position);
+            console.log(color);
+            console.log("------");
+            var geometryCube = dyad( size , 0, 0);
+            geometryCube.computeLineDistances();
 
-        function coordsys(scene, size, position, color) {
+            var cube_mat = new THREE.LineDashedMaterial( 
+                    { color: color, dashSize: 8, gapSize: 5, linewidth: 3 });
+
+            var object = new THREE.Line( geometryCube, cube_mat, THREE.LinePieces );
+
+            object.position.set(position.x, position.y, 0);
+            object.rotation.z = init_ang;
+            scene.add( object );
+
+            return object;
+        }
+
+
+        function coordsys3(scene, size, position, color) {
             var geometryCube = triad( size , 0, 0, 0);
             geometryCube.computeLineDistances();
 
             var cube_mat = new THREE.LineDashedMaterial( 
-                    { color: color, dashSize: 3, gapSize: 1, linewidth: 4 });
+                    { color: color, dashSize: 3, gapSize: 1, linewidth: 3 });
 
             var object = new THREE.Line( geometryCube, cube_mat, THREE.LinePieces );
 
@@ -42,21 +74,36 @@
 
         function init(container, rendererBGColor) {
 
-            var aspect = WIDTH / HEIGHT;
-            camera = new THREE.PerspectiveCamera( 33, aspect, 0.1, 1000 ); 
+            camera = new THREE.OrthographicCamera( WIDTH / - 2, WIDTH / 2, 
+                                                   HEIGHT / 2, HEIGHT / - 2, 
+                                                   -500, 1000 );
+            camera.position.x = 0;
+            camera.position.y = 50;
             camera.position.z = 100;
 
             scene = new THREE.Scene(); 
 
             renderer = new THREE.WebGLRenderer( { antialias: true } );
-            renderer.setClearColor( rendererBGColor ); // a nice gray
+            renderer.setClearColor( rendererBGColor );
             renderer.setSize( WIDTH, HEIGHT );
             container.appendChild( renderer.domElement );
         }
 
-        function triad( size, x, y, z) {
-            var h = size * 0.5;
+        function dyad( size, x, y) {
+            console.log("###dyad###");
+            console.log("x: "+x+" , y: "+y);
+            var geometry = new THREE.Geometry();
 
+            geometry.vertices.push( new THREE.Vector3( x, y, 0 ) );
+            geometry.vertices.push( new THREE.Vector3( x + size, y, 0 ) );
+
+            geometry.vertices.push( new THREE.Vector3( x, y, 0 ) );
+            geometry.vertices.push( new THREE.Vector3( x, y + size, 0 ) );
+
+            return geometry;
+        }
+
+        function triad( size, x, y, z) {
             var geometry = new THREE.Geometry();
 
             geometry.vertices.push( new THREE.Vector3( x, y, z ) );
@@ -71,26 +118,19 @@
             return geometry;
         }
 
-        /*
-        var geometry = new THREE.CubeGeometry(1,1,1);
-        var material = new THREE.MeshBasicMaterial( { color: 0x00ff00 } ); 
-        var cube = new THREE.Mesh( geometry, material ); 
-        scene.add( cube ); 
-        camera.position.z = 5;
-        */
-
-
         function render() { 
             requestAnimationFrame(render); 
 
             var time = Date.now() * 0.001;
 
+            /*
                 objects[0].rotation.x += 0.03;
                 objects[0].rotation.z += 0.05;
                 //objects[0].rotation.y += 0.01;
                 //objects[1].rotation.x -= 0.05;
                 objects[1].rotation.y += 0.05;
                 objects[1].position.x += 0.05;
+                */
             renderer.render(scene, camera);
         } 
         render();
