@@ -1,6 +1,6 @@
 <html> 
     <head>
-        <title>My first Three.js app</title>
+        <title>rotationland</title>
         <style>canvas { width: 100%; height: 100% }</style>
     </head>
     <body>
@@ -8,7 +8,7 @@
     
     <script>
         var camera, scene, renderer, material;
-        var objects = [];
+        var things = [];
         var WIDTH = window.innerWidth;
         var HEIGHT = window.innerHeight;
 
@@ -17,28 +17,52 @@
 
         init(container, 0xefefef);
 
-        
+        function Frame(origin, init_ang, angvel) {
+            this.origin = origin;
+            this.init_ang = init_ang;
+            this.angvel = angvel;
+
+            this.origin_vel = new THREE.Vector2(0, 0);
+
+            this.object = null;
+        }
+
+        var frmA = new Frame(new THREE.Vector2(-400, 100),
+                             0, 
+                             0.02);
+
+        var frmB = new Frame(new THREE.Vector2(50, -50),
+                             Math.PI/6, 
+                             -0.2);
+
+        frmB.origin_vel = new THREE.Vector2(0, 1);
+
         /*
         objects.push( coordsys3(scene, 30, new THREE.Vector3(-20, -5, 0), 0xffaa00) );
         objects.push( coordsys3(scene, 15, new THREE.Vector3(-50, 20, 0), 0xff00aa) );
         */
 
         var axis_size = 200;
-        var origin = new THREE.Vector2(-400, 100);
-        objects.push( coordsys2(scene, 
+        frmA.object = coordsys2(scene, 
                                 axis_size, 
-                                origin, 0xffaa00,
-                                0.0) );
+                                frmA.origin,
+                                0xffaa00,
+                                frmA.init_ang);
 
-        var origin2 = new THREE.Vector2(100, -50);
-
-        objects.push( coordsys2(scene, 
+        frmB.object = coordsys2(scene, 
                                 axis_size, 
-                                origin2, 0xff00aa,
-                                Math.PI/6) );
+                                frmB.origin,
+                                0xff00aa,
+                                frmB.init_ang);
+
+        things.push(frmA);
+        things.push(frmB);
 
         var particle_loc = new THREE.Vector2(-200, 0);
-        particle2(scene, particle_loc, 0x222222);
+        var p = particle2(scene, particle_loc, 0x222222);
+
+        vector2(scene, frmA.origin, particle_loc, 0xff0000);
+        vector2(scene, frmB.origin, particle_loc, 0x0000ff);
 
 
         function particle2(scene, position, color) {
@@ -52,16 +76,33 @@
 
             scene.add( object );
 
+            return object;
+        }
+
+        function vector2(scene, from_pos, to_pos, color) {
+            var geo = new THREE.Geometry();
+
+            geo.vertices.push( new THREE.Vector3( from_pos.x, from_pos.y, 0 ) );
+            geo.vertices.push( new THREE.Vector3( to_pos.x, to_pos.y, 0 ) );
+
+            var mat = new THREE.LineDashedMaterial( 
+                    { color: color, linewidth: 2 });
+
+            var object = new THREE.Line( geo, mat, THREE.LinePieces );
+
+            scene.add( object );
+
+            return object;
         }
 
         function coordsys2(scene, size, position, color, init_ang) {
             var geometry = dyad( size , 0, 0);
             geometry.computeLineDistances();
 
-            var cube_mat = new THREE.LineDashedMaterial( 
+            var mat = new THREE.LineDashedMaterial( 
                     { color: color, dashSize: 8, gapSize: 5, linewidth: 3 });
 
-            var object = new THREE.Line( geometry, cube_mat, THREE.LinePieces );
+            var object = new THREE.Line( geometry, mat, THREE.LinePieces );
 
             object.position.set(position.x, position.y, 0);
             object.rotation.z = init_ang;
@@ -75,10 +116,10 @@
             var geometry = triad( size , 0, 0, 0);
             geometry.computeLineDistances();
 
-            var cube_mat = new THREE.LineDashedMaterial( 
+            var mat = new THREE.LineDashedMaterial( 
                     { color: color, dashSize: 3, gapSize: 1, linewidth: 3 });
 
-            var object = new THREE.Line( geometry, cube_mat, THREE.LinePieces );
+            var object = new THREE.Line( geometry, mat, THREE.LinePieces );
 
             object.position = position;
             scene.add( object );
@@ -104,8 +145,6 @@
         }
 
         function dyad( size, x, y) {
-            console.log("###dyad###");
-            console.log("x: "+x+" , y: "+y);
             var geometry = new THREE.Geometry();
 
             geometry.vertices.push( new THREE.Vector3( x, y, 0 ) );
@@ -137,14 +176,14 @@
 
             var time = Date.now() * 0.001;
 
-            /*
-                objects[0].rotation.x += 0.03;
-                objects[0].rotation.z += 0.05;
-                //objects[0].rotation.y += 0.01;
-                //objects[1].rotation.x -= 0.05;
-                objects[1].rotation.y += 0.05;
-                objects[1].position.x += 0.05;
-                */
+                things[0].object.rotation.z += things[0].angvel;
+                things[0].object.position.x += things[0].origin_vel.x;
+                things[0].object.position.y += things[0].origin_vel.y;
+
+                things[1].object.rotation.z += things[1].angvel;
+                things[1].object.position.x += things[1].origin_vel.x;
+                things[1].object.position.y += things[1].origin_vel.y;
+                //objects[1].position.x += 0.05;
             renderer.render(scene, camera);
         } 
         render();
