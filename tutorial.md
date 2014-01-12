@@ -7,7 +7,7 @@ The angle sum identities are needed.
 $$sin(a + b) = sin(a) cos(b) + cos(a) sin(b)$$
 $$cos(a + b) = cos(a) cos(b) - sin(a) sin(b)$$
 
-Since $cos(-x) = cos(x)$ and (sin(-x) = - sin(x)$, we have:
+Since $cos(-x) = cos(x)$ and $sin(-x) = - sin(x)$, we have:
 
 $$sin(a - b) = sin(a) cos(b) - cos(a) sin(b)$$
 $$cos(a - b) = cos(a) cos(b) + sin(a) sin(b)$$
@@ -44,6 +44,12 @@ Let $p \in A$ and $v_1, v_2 \in V$. Let $p_1 := p \to v_1$ and $p_2 := p \to v_2
 $$(p \to v_1) \to v_2 = p \to (v_1 + v_2)$$
 
 TODO: Decide if this needs to be expanded. Doing so would be getting pretty pedantic.
+
+## Others that I need to fit in somewhere
+
+ - Rotation matrices
+
+ - reflection about pi/4
 
 
 # Introduction
@@ -108,3 +114,30 @@ We'll determine the transition matrix $H$ first. Initially (at time $t = 0$), $\
 
 $$H(t) = \begin{bmatrix} cos(\theta + \omega t) & sin(\theta + \omega t) \\
 -sin(\theta + \omega t) & cos(\theta + \omega t) \end{bmatrix}$$
+
+
+
+
+
+## Where does this go?
+
+$$\begin{bmatrix} 0 & \omega \\ - \omega & 0 \end{bmatrix}$$
+
+If $\mathcal{C}$ rotates constantly at $\omega_1$ and $\mathcal{D}$ rotates at $\omega_2$, then
+
+$$H'(t) = \begin{bmatrix} 0 & \omega \\ - \omega & 0 \end{bmatrix} H(t)$$
+
+
+
+## First two examples
+
+ 1. "stationary point" with two constantly rotating ref frames (different speeds) and same origin
+
+ 2. a particle moving constant speed downwards in one ref frame versus another constantly rotating
+
+ 3. a particle falling under gravity (launched with initial velocity) with one "fixed" frame and another rotating
+
+
+Point out in each case the coriolis theorem:
+
+$$y'(t) = H(t) x'(t) + H'(t) x(t)$$
