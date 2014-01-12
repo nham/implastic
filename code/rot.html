@@ -33,9 +33,9 @@
 
         var frmB = new Frame(new THREE.Vector2(50, -50),
                              Math.PI/6, 
-                             -0.2);
+                             -0.1);
 
-        frmB.origin_vel = new THREE.Vector2(0, 1);
+        frmB.origin_vel = new THREE.Vector2(0.2, 1);
 
         /*
         objects.push( coordsys3(scene, 30, new THREE.Vector3(-20, -5, 0), 0xffaa00) );
@@ -61,8 +61,8 @@
         var particle_loc = new THREE.Vector2(-200, 0);
         var p = particle2(scene, particle_loc, 0x222222);
 
-        vector2(scene, frmA.origin, particle_loc, 0xff0000);
-        vector2(scene, frmB.origin, particle_loc, 0x0000ff);
+        var A_to_p = vector2(scene, frmA.origin, particle_loc, 0xff0000);
+        var B_to_p = vector2(scene, frmB.origin, particle_loc, 0x0000ff);
 
 
         function particle2(scene, position, color) {
@@ -133,7 +133,7 @@
                                                    HEIGHT / 2, HEIGHT / - 2, 
                                                    -500, 1000 );
             camera.position.x = 0;
-            camera.position.y = 50;
+            camera.position.y = 20;
             camera.position.z = 100;
 
             scene = new THREE.Scene(); 
@@ -181,8 +181,15 @@
                 things[0].object.position.y += things[0].origin_vel.y;
 
                 things[1].object.rotation.z += things[1].angvel;
-                things[1].object.position.x += things[1].origin_vel.x;
-                things[1].object.position.y += things[1].origin_vel.y;
+                things[1].origin.x += things[1].origin_vel.x;
+                things[1].origin.y += things[1].origin_vel.y;
+                things[1].object.position.x = things[1].origin.x;
+                things[1].object.position.y = things[1].origin.y;
+
+                B_to_p.geometry.vertices[0].x = things[1].origin.x;
+                B_to_p.geometry.vertices[0].y = things[1].origin.y;
+                B_to_p.geometry.verticesNeedUpdate = true;
+                //B_to_p.geometry.vertices.pop();
                 //objects[1].position.x += 0.05;
             renderer.render(scene, camera);
         } 
