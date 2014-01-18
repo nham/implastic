@@ -9,14 +9,22 @@ document.body.appendChild( container );
 init(container, 0xefefef);
 
 
-var r = 80;
+var r = 200;
 var dt = 0.01;
+var speed = 150; // velocity at which the particle moves downward in the fixed frame
+var omega = Math.PI / 8; // angular velocity of the rotating frame
+
+var travel_secs = 2 * r / speed;
+var steps = travel_secs / dt;
 
 var geo = new THREE.Geometry();
 
-for(var i = 0; i < 200; i++) {
-    geo.vertices.push( new THREE.Vector3((r - i*(4/10)) * Math.sin(dt * i), 
-                                         (r - i*(4/10)) * Math.cos(dt * i), 
+// speed * steps * dt =  speed * dt * 2 * r / (speed * dt)
+//                    = 2 r
+for(var i = 0; i <= steps; i++) {
+    var x = r - speed * dt * i;
+    geo.vertices.push( new THREE.Vector3(x * Math.sin(omega * dt * i), 
+                                         x * Math.cos(omega * dt * i), 
                                          0) );
 }
 
@@ -31,9 +39,34 @@ var particle_loc = new THREE.Vector2(0, 0);
 var p = particle2(scene, particle_loc, 0x222222);
 
 
+circle(scene, 0, r, 600);
+circle(scene, 0, 3*r/4, 600);
+circle(scene, 0, r/2, 600);
+circle(scene, 0, r/4, 600);
+
 
 
 /*****/
+
+function circle(scene, center, radius, steps) {
+    var geo = new THREE.Geometry();
+
+    var tau = Math.PI * 2;
+    var ang_inc = tau / steps;
+    for(var i = 0; i <= steps; i++) {
+        geo.vertices.push( new THREE.Vector3(radius * Math.sin(ang_inc * i), 
+                                             radius * Math.cos(ang_inc * i), 
+                                             0) );
+    }
+
+    var mat = new THREE.LineBasicMaterial({ color: 0x000000 });
+
+    var object = new THREE.Line( geo, mat, THREE.LineStrip );
+    scene.add( object );
+
+    return object;
+
+}
 
 
 function trace(scene, particle_loc) {
