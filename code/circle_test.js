@@ -18,9 +18,10 @@ var travel_secs = 2 * r / speed;
 var steps = travel_secs / dt;
 
 var geo = new THREE.Geometry();
+var vec = new THREE.Vector3(0, r, 0);
 
 for(var i = 0; i <= steps; i++) {
-    geo.vertices.push( new THREE.Vector3(0, r, 0) );
+    geo.vertices.push( vec );
 }
 
 var mat = new THREE.LineBasicMaterial( 
@@ -197,10 +198,8 @@ function render() {
                                        x * Math.cos(omega * step * dt), 
                                        0);
 
-        for(var j = step; j <= steps; j++) {
-            geo.vertices[j] = newvec;
-        }
-
+        geo.vertices.shift();
+        geo.vertices.push(newvec);
         geo.verticesNeedUpdate = true;
     }
 

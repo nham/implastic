@@ -8,26 +8,6 @@ document.body.appendChild( container );
 
 init(container, 0xefefef);
 
-function Frame(origin, init_ang, angvel) {
-    this.origin = origin;
-    this.init_ang = init_ang;
-    this.angvel = angvel;
-
-    this.origin_vel = new THREE.Vector2(0, 0);
-
-    this.object = null;
-    this.trace = null;
-}
-
-Frame.prototype.incTrace = function() {
-    var len = this.trace.geometry.vertices.length;
-    var v = this.trace.geometry.vertices[len - 1].clone();
-    this.trace.geometry.vertices.push(
-            v.applyAxisAngle(new THREE.Vector3(0, 0, 1),
-                             this.angvel));
-    this.trace.geometry.vetricesNeedUpdate = true;
-}
-
 var frmA = new Frame(new THREE.Vector2(-400, 100),
                      0, 
                      0.02);
@@ -67,12 +47,60 @@ var B_to_p = vector2(scene, frmB.origin, particle_loc, 0x0000ff);
 
 
 
-frmA.trace = trace(scene, particle_loc);
+// frmA.trace = trace(scene, particle_loc);
+    var geo = new THREE.Geometry();
+    var v = particle_loc.clone();
+    v.sub(frmA.origin);
+    var vec = new THREE.Vector3(v.x, v.y, 0);
 
+    for(var i = 0; i < 100; i++) {
+        geo.vertices.push(vec);
+    }
+
+    var mat = new THREE.LineBasicMaterial( 
+            { color: 0x4477aa, linewidth: 2 });
+
+    var butt = new THREE.Line( geo, mat, THREE.LineStrip );
+    console.log(frmA.origin);
+    butt.position.set(frmA.origin.x, frmA.origin.y, 0);
+    scene.add( butt );
+
+
+
+/*****/
+
+function Frame(origin, init_ang, angvel) {
+    this.origin = origin;
+    this.init_ang = init_ang;
+    this.angvel = angvel;
+
+    this.origin_vel = new THREE.Vector2(0, 0);
+
+    this.object = null;
+    this.trace = null;
+}
+
+Frame.prototype.incTrace = function(step) {
+    console.log("bababa " + this.trace.geometry.vertices.length);
+    var v = this.trace.geometry.vertices[step - 1].clone();
+    this.trace.geometry.vertices.shift();
+    var newvec = v.applyAxisAngle(new THREE.Vector3(0, 0, 1),
+                                  this.angvel);
+    console.log(newvec);
+    this.trace.geometry.vertices.push( newvec );
+    this.trace.geometry.vetricesNeedUpdate = true;
+}
+
+/*****/
 
 function trace(scene, particle_loc) {
     var geo = new THREE.Geometry();
-    geo.vertices.push( new THREE.Vector3(particle_loc.x, particle_loc.y, 0));
+    var vec = new THREE.Vector3(particle_loc.x, particle_loc.y, 0);
+
+    for(var i = 0; i < 100; i++) {
+        geo.vertices.push(vec);
+    }
+
     var mat = new THREE.LineBasicMaterial( 
             { color: 0x4477aa, linewidth: 2 });
 
@@ -200,8 +228,16 @@ function render() {
         things[0].object.position.y += things[0].origin_vel.y;
 
         // the trace
-        things[0].incTrace();
-        console.log(things[0].trace.geometry.vertices);
+        step += 1;
+        if (step <= 100) {
+            var vec = new THREE.Vector3(v.x, 
+                                        v.y - 15 * step * 0.1,
+                                        0);
+            geo.vertices.shift();
+            geo.vertices.push(vec);
+            geo.verticesNeedUpdate = true;
+        }
+//          things[0].incTrace(step);
 
         things[1].object.rotation.z += things[1].angvel;
         things[1].origin.x += things[1].origin_vel.x;
@@ -215,4 +251,5 @@ function render() {
     renderer.render(scene, camera);
 } 
 
+var step = 0;
 render();
