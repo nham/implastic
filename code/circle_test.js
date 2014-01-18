@@ -10,22 +10,17 @@ init(container, 0xefefef);
 
 
 var r = 200;
-var dt = 0.01;
-var speed = 150; // velocity at which the particle moves downward in the fixed frame
-var omega = Math.PI / 8; // angular velocity of the rotating frame
+var dt = 0.2;
+var speed = 10; // velocity at which the particle moves downward in the fixed frame
+var omega = Math.PI / 7; // angular velocity of the rotating frame
 
 var travel_secs = 2 * r / speed;
 var steps = travel_secs / dt;
 
 var geo = new THREE.Geometry();
 
-// speed * steps * dt =  speed * dt * 2 * r / (speed * dt)
-//                    = 2 r
 for(var i = 0; i <= steps; i++) {
-    var x = r - speed * dt * i;
-    geo.vertices.push( new THREE.Vector3(x * Math.sin(omega * dt * i), 
-                                         x * Math.cos(omega * dt * i), 
-                                         0) );
+    geo.vertices.push( new THREE.Vector3(0, r, 0) );
 }
 
 var mat = new THREE.LineBasicMaterial( 
@@ -39,10 +34,12 @@ var particle_loc = new THREE.Vector2(0, 0);
 var p = particle2(scene, particle_loc, 0x222222);
 
 
-circle(scene, 0, r, 600);
-circle(scene, 0, 3*r/4, 600);
-circle(scene, 0, r/2, 600);
-circle(scene, 0, r/4, 600);
+circle(scene, 0, r, 500);
+circle(scene, 0, 3*r/4, 500);
+circle(scene, 0, r/2, 500);
+circle(scene, 0, r/4, 500);
+
+console.log(Date.now());
 
 
 
@@ -192,9 +189,24 @@ function triad( size, x, y, z) {
 function render() { 
     requestAnimationFrame(render); 
 
-    var time = Date.now() * 0.001;
+    step += 1;
+
+    if(step <= steps) {
+        var x = r - speed * step * dt;
+        var newvec = new THREE.Vector3(x * Math.sin(omega * step * dt), 
+                                       x * Math.cos(omega * step * dt), 
+                                       0);
+
+        for(var j = step; j <= steps; j++) {
+            geo.vertices[j] = newvec;
+        }
+
+        geo.verticesNeedUpdate = true;
+    }
 
     renderer.render(scene, camera);
 } 
+
+var step = 0;
 
 render();
