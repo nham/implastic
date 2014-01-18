@@ -51,6 +51,8 @@ TODO: Decide if this needs to be expanded. Doing so would be getting pretty peda
 
  - reflection about pi/4
 
+ - Time-derivative of a matrix-valued function and the product rule (needed for "Coriolis theorem"
+
 
 # Introduction
 
@@ -141,3 +143,31 @@ $$H'(t) = \begin{bmatrix} 0 & \omega \\ - \omega & 0 \end{bmatrix} H(t)$$
 Point out in each case the coriolis theorem:
 
 $$y'(t) = H(t) x'(t) + H'(t) x(t)$$
+
+
+
+
+## dadadda
+
+Every transition matrix $H(t)$ takes the form of
+
+$$\begin{bmatrix} cos(\alpha(t)) & sin(\alpha(t)) \\
+-sin(\alpha(t)) & cos(\alpha(t)) \end{bmatrix}$$
+
+where $\alpha(t)$ is the angle that separates $\mathcal{C}$ and $\mathcal{D}$. More specifically, it is the angle that one must rotate $\mathcal{C}$ in order to turn it into $\mathcal{D}$ (we assume, for simplicity, that both frames have the same origin at all times).
+
+$$H(t) = \begin{bmatrix} -\omega(t) sin(\alpha(t)) & \omega(t) cos(\alpha(t)) \\
+-\omega(t) cos(\alpha(t)) & -\omega(t) sin(\alpha(t)) \end{bmatrix}$$
+
+or
+
+$$H'(t) = \Omega(t) H(t)$$
+
+where $\omega(t) = \alpha'(t)$ and
+
+$$\Omega(t) = \begin{bmatrix{ 0 & \omega(t) \\
+- \omega(t) & 0 \end{bmatrix}$$
+
+TODO: graphic comparing $\alpha(t)$, $\alpha(t+\epsilon)$ and $\epsilon \omega(t)$. Note that this illustrates $H(t) + \epsilon H'(t) = H(t+\epsilon)$.
+
+Coriolis says that $H x' + \Omega y = y'$.
